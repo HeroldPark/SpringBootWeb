@@ -95,7 +95,7 @@
 	16. Mybatis 오류
 		Invalid bound statement (not found): com.newlecture.web.dao.NoticeDao.getViewList
 		=> mybatis.mapper-locations:classpath:com/newlecture/web/dao/mybatis/mapper/*.xml 지정 오류
-		=>
+	
 	</script>
 </body>
 </html>
