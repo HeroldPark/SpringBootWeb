@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<!-- 아래 customer, admin에서 사용하는 공통되는 내용을 여기로 집중화 한다. -->
+	<definition name="layout.common" template="/WEB-INF/view/inc/layout.jsp">
+	    <put-attribute name="title" value="Tiles Tutorial homepage" />
+	    <put-attribute name="header" value="/WEB-INF/view/inc/header.jsp" />
+	    <put-attribute name="footer" value="/WEB-INF/view/inc/footer.jsp" />
+	  </definition>
+	  
+	  <!-- 
+	  위의 layout.common이 없을때는 이렇게 사용했지만 위와 같이 선언 한 후에는 아래 주석처리 되지 않은 형식으로 상속받아 사용 가능하다.
+	 <definition name="home.*" template="/WEB-INF/view/inc/layout.jsp" extends="layout.common">
+	    <put-attribute name="title" value="Tiles Tutorial homepage" />
+	    <put-attribute name="header" value="/WEB-INF/view/inc/header.jsp" />
+	    <put-attribute name="main" value="/WEB-INF/view/{1}.jsp" />
+	    <put-attribute name="footer" value="/WEB-INF/view/inc/footer.jsp" />
+	  </definition>
+	   -->
+	   
+	  <!-- 이것은 위의 "layout.common"을 그대로 물려받아 사용한 것이다. -->
+	  <!-- 웹에서 http://localhost:8080/ 로 접속할때 -->
+	  <definition name="root.*" extends="layout.common">
+	  	<put-attribute name="main" value="/{1}.jsp" />
+	  </definition>
+	  
+	  <definition name="home.*" extends="layout.common">
+	  	<put-attribute name="main" value="/WEB-INF/view/{1}.jsp" />
+	  </definition>
+	  
+	  <definition name="customer.*.*" template="/WEB-INF/view/customer/inc/layout.jsp" extends="layout.common">
+	    <put-attribute name="visual" value="/WEB-INF/view/customer/inc/visual.jsp" />
+	    <put-attribute name="aside" value="/WEB-INF/view/customer/inc/aside.jsp" />
+	    <put-attribute name="main" value="/WEB-INF/view/customer/{1}/{2}.jsp" />
+	  </definition>
+	  
+	  <definition name="admin.*.*.*" template="/WEB-INF/view/admin/inc/layout.jsp" extends="layout.common">
+	    <put-attribute name="visual" value="/WEB-INF/view/admin/inc/visual.jsp" />
+	    <put-attribute name="aside" value="/WEB-INF/view/admin/inc/aside.jsp" />
+	    <put-attribute name="main" value="/WEB-INF/view/admin/{1}/{2}/{3}.jsp" />
+	  </definition>
+	  
+	  <definition name="user.*" template="/WEB-INF/view/user/inc/layout.jsp" extends="layout.common">
+	    <put-attribute name="visual" value="/WEB-INF/view/user/inc/visual.jsp" />
+	    <put-attribute name="aside" value="/WEB-INF/view/user/inc/aside.jsp" />
+	    <put-attribute name="main" value="/WEB-INF/view/user/{1}.jsp" />
+	  </definition>
+</tiles-definitions>

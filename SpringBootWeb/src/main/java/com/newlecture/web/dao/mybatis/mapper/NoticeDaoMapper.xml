@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newlecture.web.dao.NoticeDao">
+
+  <resultMap type="com.newlecture.web.entity.NoticeView" id="noticeViewMap">
+  	<result property="userName" column="user_name" />
+  </resultMap>
+  
+  <select id="getViewList" resultMap="noticeViewMap">	<!-- 위의 resultMap에서 지정한 id -->
+  <!-- <select id="getViewList" resultType="com.newlecture.web.entity.NoticeView"> -->
+  <!-- where 사용 방법 -->	
+	SELECT * FROM NoticeView
+	<where>
+		<if test="query != null and query != '' ">
+			${field} like '%${query}%'
+		</if>
+		and pub = #{pub}
+	</where>
+		ORDER BY regdate
+		LIMIT #{offset}, #{size}
+
+
+	<!-- trim 사용 방법 -->	
+    <!-- SELECT * FROM NoticeView
+	<trim prefix="WHERE" prefixOverrides="AND | OR ">
+		<if test="query != null and query != '' ">
+			${field} like '%${query}%'
+		</if>
+		and pub = #{pub}
+	</trim>
+		ORDER BY regdate
+		LIMIT #{offset}, #{size} -->
+  </select>
+  
+  <select id="getCount" resultType="int">
+  	SELECT count(id) count FROM notice
+	<where>
+		<if test="query != null and query != '' ">
+			${field} like '%${query}%'
+		</if>
+		and pub = #{pub}
+	</where>
+  </select>
+  
+  <select id="getView" resultType="com.newlecture.web.entity.NoticeView">
+  	SELECT * FROM noticeView
+	WHERE id = #{id}
+  </select>
+  
+  <select id="getNext" resultType="com.newlecture.web.entity.Notice">
+  	select * from notice
+  	where regdate &gt; (select regdate from notice where id = #{id})
+  	limit 1
+  </select>
+  
+  <select id="getPrev" resultType="com.newlecture.web.entity.Notice">
+  	select * from notice
+  	where regdate &lt; (select regdate from notice where id = #{id})
+  	order by regdate desc
+  	limit 1
+  </select>
+  
+  <update id="update" parameterType="com.newlecture.web.entity.Notice">
+  	update notice
+  	set		title = #{title},
+  			content = #{content},
+  			hit = #{hit},
+  			pub = #{pub}
+  	where id = #{id}
+  </update>
+  
+  <insert id="insert" parameterType="com.newlecture.web.entity.Notice">
+	  insert into notice(title, content, writerId)
+	  values(#{title}, #{content}, #{writerId})
+  </insert>
+  
+  <delete id='delete' >
+  	delete from notice where id = #{id}
+  </delete>
+  
+  <delete id="deleteAll">
+  	delete from Notice
+  	where id in
+  	<foreach item="id" index="index" collection="ids"
+        open="(" separator="," close=")" >
+          #{id}
+    </foreach>
+  </delete>
+  
+  <update id="updatePubAll">
+  	<!-- 방법 1 - 한번에 처리 가능하다.
+  	update Notice
+  	set		pub = case id
+  				when = 14	then 0
+  				when = 15	then 0
+  				when = 21	then 1
+  				when = 22	then 1
+  			end
+  	where id in (14, 15, 21, 22) 
+  	-->
+  	<!-- update Notice
+  	set		pub = case id
+  				<foreach item="id" index="index" collection="pubIds">
+			          when #{id} then 1
+			    </foreach>
+  				<foreach item="id" index="index" collection="closeIds">
+			          when #{id} then 0
+			    </foreach>
+  			end
+  	where id in (
+  		<foreach item="id" index="index" collection="pubIds">
+			#{id}
+		</foreach>
+  		, 
+  		<foreach item="id" index="index" collection="closeIds">
+			#{id}
+		</foreach>
+  	) -->
+  	
+  	<!-- 방법 2 - close, open별로 두번 호출해야 한다. -->
+  	update Notice
+  	set		pub = #{pub}
+  	where id in
+  	<foreach item="id" index="index" collection="ids"
+        open="(" separator="," close=")" >
+          #{id}
+    </foreach>
+  </update>
+  
+</mapper>
